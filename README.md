@@ -16,3 +16,8 @@ https://github.com/ferjad/FGSM_pytorch
 https://github.com/yangdechuan/fast-gradient-sign-method-tensorflow
 
 Adversarial policy(Adam Gleave): https://github.com/HumanCompatibleAI/adversarial-policies
+
+
+iLQR mujoco: https://github.com/anassinator/ilqr
+
+hands_on: https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-On-Second-Edition
