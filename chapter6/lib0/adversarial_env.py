@@ -4,17 +4,17 @@ import torch
 import torch.nn as nn
 from gym import spaces
 
-from lib0 import wrappers
 
 
 class adversarial_env(gym.Env):
     metadata = {'render.model': ['human']}
+    ACTION_PENALTY = -0.5
 
-    def __init__(self, env_name, victim_net):
+    def __init__(self, env, victim_net):
         super(adversarial_env, self).__init__()
 
         self.victim_net = victim_net
-        self.env = wrappers.make_env(env_name)
+        self.env = env
         self.state = None
 
         self.action_space = spaces.Discrete(2*3)
@@ -34,27 +34,35 @@ class adversarial_env(gym.Env):
         self.state = obs
         return obs
 
-    def step(self, action: int):
+    def step(self, action: int, device=torch.device("cuda")):
         target_action = None
         if action < 3:
-            q_vals = self.victim_net(self.state).cpu().data.numpy()[0]
+            state = torch.tensor([self.state], dtype=torch.float).to(device)
+            with torch.no_grad():
+                q_vals = self.victim_net(state).cpu().data.numpy()[0]
             action = np.argmax(q_vals)
             obs, r, done, info = self.env.step(action)
             self.state = obs
             return obs, -r, done, info
         else:
-            if action == 4:
+            if action == 3:
                 target_action = [2]
-            elif action == 5:
+            elif action == 4:
                 target_action = [5]
-            elif action == 6:
+            elif action == 5:
                 target_action = [0]
             noise_state = self._FGSM_attack(state=self.state, net=self.victim_net, target_action=target_action)
+            # print(noise_state)
             q_vals = self.victim_net(noise_state).cpu().data.numpy()[0]
             action = np.argmax(q_vals)
             obs, r, done, info = self.env.step(action)
+            r = -r
+            r += self.ACTION_PENALTY
             self.state = obs
-            return obs, -r, done, info
+            return obs, r, done, info
+
+    # def _action_penalty(self, action):
+    #     return -1
 
     def render(self, mode='human'):
         self.env.render()
@@ -66,11 +74,12 @@ class adversarial_env(gym.Env):
         if target_action is None:
             print("target_action = None")
             return
+        state = torch.tensor([state], dtype=torch.float).to(device)
         state = state.to(device)
         state.requires_grad = True
         output = net(state)
         output = nn.Softmax(dim=1)(output)
-        target_action = torch.tensor(target_action, dtype=torch.float).to(device)
+        target_action = torch.tensor(target_action, dtype=torch.long).to(device)
         Iter_nu = 0
         Iter_max_nu = Iter_max_nu
         # while np.argmax(output.cpu().data.numpy()[0]) != 5 or Iter_nu < Iter_max_nu:
@@ -91,3 +100,9 @@ class adversarial_env(gym.Env):
             output = net(state)
             output = nn.Softmax(dim=1)(output)
         return state
+
+    def unwrapped(self):
+        return self.env.unwrapped
+
+    def seed(self, seed=None):
+        self.env.seed(seed)
