@@ -1,0 +1,6 @@
+six
+gym==0.15.4
+mujoco-py-131 @ git+https://github.com/AdamGleave/mujoco-py.git@mj131
+numpy>=1.12.1
+tensorflow>=1.1.0
+stable-baselines>=2.10.0
