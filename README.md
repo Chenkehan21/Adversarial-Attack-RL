@@ -25,4 +25,4 @@ hands_on: https://github.com/PacktPublishing/Deep-Reinforcement-Learning-Hands-O
 Vulnerability of Deep Reinforcement Learning to Policy Induction Attacks:
 https://link.springer.com/chapter/10.1007/978-3-319-62416-7_19
 
-nmh为啥一样的:https://openreview.net/attachment?id=Hkxbz1HKvr&name=original_pdf
+为啥一样的:https://openreview.net/attachment?id=Hkxbz1HKvr&name=original_pdf
