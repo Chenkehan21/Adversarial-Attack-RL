@@ -28,3 +28,5 @@ https://link.springer.com/chapter/10.1007/978-3-319-62416-7_19
 为啥一样的:https://openreview.net/attachment?id=Hkxbz1HKvr&name=original_pdf
 
 survey: https://arxiv.org/pdf/2001.09684.pdf
+
+attack methods:https://ieeexplore.ieee.org/stamp/stamp.jsp?tp=&arnumber=7958570
